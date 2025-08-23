@@ -13,15 +13,22 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 ---
 ## 2. Automated ML with a large dataset
 ### **Description:**  
-Using the Diabetes data set from R, I performed data exploration to observe distributions, correlations, and outliers present in the predictor set.
-Using that knowledge, I then moved forward with Regression analysis, and interpreted the results.
+Students were tasked with a Classification problem and a Regression problem.
+Using a dataset from consumers banks with over 1M observations, I performed data quality inspection, exploration, model training and testing.
+This ultimately resulted in a comprehensive model comparison and deployment strategy for a marketing director.
 
-Regression models included:
-- Linear
-- Best Subset
-- LASSO
-- Ridge
+Data exploration was performed with Base R and packages like ggplot/corrplot/tidy/dplyr
+Some modeling was done with caret, but H20's AutoML package made much of these results possible.
+AutoML allowed me to train 50+ iteration of each individual modeling technique I was considering for a solution to the classification/regression problem at hand.
 
+Modeling techniques I chose for this analysis included:
+  - Gradient Boosting Method (GBM)
+  - Artificial Neural Network
+  - Distributed Random Forest
+  - Logistic Regression
+  - Generalized Additive Model (GAM)
+  - Ensemble Methods
+    
 [VIEW PROJECT in R Markdown HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
 
 [VIEW PROJECT in PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project2_AF_PDFversion.pdf)
