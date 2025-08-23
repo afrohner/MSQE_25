@@ -12,9 +12,15 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 
 ---
 
-## 2. Predictive Analytics Used for Consumer Banking 
+## 2.Data Exploration and Regularized Regression analysis in R
 ### **Description:**  
-Simulates carbon credit markets and policy impacts using econometric analysis tools.  
+Using the Diabetes data set from R, I performed data exploration to observe distributions, correlations, and outliers present in the predictor set.
+Using that knowledge, I then moved forward with Regression analysis, and interpreted the results.
+Regression models included:
+- Linear
+- Best Subset
+- LASSO
+- Ridge
 
 [VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
 
