@@ -8,9 +8,7 @@
 Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
 **Tech Stack:** R, Eviews
 **Highlights:**  
--   
-- Supports custom equity filters  
-- Includes out-of-sample forecasting module  
+-  
 [Repo Link](https://github.com/yourusername/FamaFrenchExplorer)
 
 ---
@@ -20,9 +18,7 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 Simulates carbon credit markets and policy impacts using econometric analysis tools.  
 **Tech Stack:** R
 **Highlights:**  
-- Estimates abatement costs under different policy scenarios  
-- Implements VAR models for emission price dynamics  
-- Features scenario export to Excel for further analysis  
+-  
 [Repo Link](https://github.com/yourusername/CarbonTradingSimulation)
 
 ---
@@ -32,18 +28,12 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
 **Tech Stack:** R  
 **Highlights:**  
-- User-friendly scripts for calculating option prices  
-- Implied volatility analysis  
-- Academic data integration for benchmark testing  
+- U 
 [Repo Link](https://github.com/yourusername/OptionsPricingToolkit)
 
 ---
 
-## 📫 Contact
 
-- Email: your.email@domain.com
-- LinkedIn: [linkedin.com/in/yourname](https://linkedin.com/in/yourname)
-- Location: California, USA
 
 ---
 
