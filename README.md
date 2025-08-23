@@ -12,10 +12,11 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 
 ---
 
-## 2.Data Exploration and Regularized Regression analysis in R
+## 2. Data Exploration and Regularized Regression analysis in R
 ### **Description:**  
 Using the Diabetes data set from R, I performed data exploration to observe distributions, correlations, and outliers present in the predictor set.
 Using that knowledge, I then moved forward with Regression analysis, and interpreted the results.
+
 Regression models included:
 - Linear
 - Best Subset
