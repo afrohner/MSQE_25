@@ -51,7 +51,7 @@ Regression models included:
 
 [VIEW PROJECT in R Markdown HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
 
-[VIEW PROJECT in PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project2_AF_PDFversion.pdf)
+[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project2_AF_PDFversion.pdf)
 
 ---
 
@@ -66,7 +66,7 @@ Using the College Scorecard data set from the US Department of education I was t
 
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
 
-[VIEW PROJECT as PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
+[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
 
 ---
 
