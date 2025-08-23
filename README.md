@@ -1,9 +1,9 @@
 # 👋 Hey, you found my school work
 ---
 
-## 📂 Featured Projects
+# 📂 Featured Projects
 
-### 1. Asset Price Forecast
+## 1. Asset Price Forecast
 **Description:**  
 Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
 **Tech Stack:** R, Eviews
@@ -13,7 +13,7 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 
 ---
 
-### 2. Predictive Analytics Used for Consumer Banking 
+## 2. Predictive Analytics Used for Consumer Banking 
 **Description:**  
 Simulates carbon credit markets and policy impacts using econometric analysis tools.  
 **Tech Stack:** R
@@ -23,7 +23,7 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 
 ---
 
-### 3. Data Exploration with College Scorecard Data set
+## 3. Data Exploration with College Scorecard Data set
 **Description:**  
 End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
 **Tech Stack:** R  
