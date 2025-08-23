@@ -19,7 +19,7 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 **Tech Stack:** R
 **Highlights:**  
 -  
- https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html
+[See Rendered Project here](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
 
 ---
 
