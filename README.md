@@ -33,7 +33,9 @@ Regression models included:
 ### **Description:**  
 End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
 
-[VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
+[VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
+
+[VIEW PROJECT as PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
 
 ---
 
