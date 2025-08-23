@@ -53,6 +53,8 @@ Regression models included:
 
 [VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project2_AF_PDFversion.pdf)
 
+[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_PROJ_2_REPORT_AF_pdf.pdf)
+
 ---
 
 ## 4. Data Exploration with College Scorecard Data set
@@ -67,6 +69,8 @@ Using the College Scorecard data set from the US Department of education I was t
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
 
 [VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
+
+[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_PROJECT_1_REPORT_AF_pdf.pdf)
 
 ---
 
