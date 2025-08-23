@@ -1,16 +1,4 @@
-# 👋 Hi, I'm Andrew Frohner
-Graduate Student | Economics & Finance | Statistical Modeling | Asset Pricing Enthusiast
----
-
-## 📖 Bio
-I have recently completed a Master's degree in Quantitative economics in California. My research focuses on econometric modeling, predictive analytics, and advanced asset pricing. With hands-on experience in academic projects and daily engagement with financial markets, I love working at the intersection of data, finance, and policy.
----
-
-## 🛠️ Skills
-
-- **Programming:** R, EViews, Python, Excel, SQL, SAS JMP Pro
-- **Modeling Techniques:** Deep Learning,  GBM, Random Forest, Regularized Regression, Probit/Tobit/Truncated, ARIMA, BVAR/VAR, VECM, GARCH 
-
+# 👋 Hey, you found my school work
 ---
 
 ## 📂 Featured Projects
