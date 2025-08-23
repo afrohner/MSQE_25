@@ -13,13 +13,13 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 ---
 ## 2. Automated ML with a large dataset
 ### **Description:**  
-Students were tasked with a Classification problem and a Regression problem.
-Using a dataset from consumers banks with over 1M observations, I performed data quality inspection, exploration, model training and testing.
+Students were tasked with a Classification and Regression  problem.
+Using a dataset from consumers banks with over 1M observations, we had to *classify* customers vs non-customers, and we had to *predict* the total sales a customer would generate, and the Number (count) of products they would purchase. I performed data quality inspection, exploration, model training and testing.
 This ultimately resulted in a comprehensive model comparison and deployment strategy for a marketing director.
 
 Data exploration was performed with Base R and packages like ggplot/corrplot/tidy/dplyr
 Some modeling was done with caret, but H20's AutoML package made much of these results possible.
-AutoML allowed me to train 50+ iteration of each individual modeling technique I was considering for a solution to the classification/regression problem at hand.
+AutoML allowed me to train 50+ iteration of each individual modeling technique I was considering as a solution to the classification/regression problem at hand.
 
 Modeling techniques I chose for this analysis included:
   - Gradient Boosting Method (GBM)
