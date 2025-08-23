@@ -29,7 +29,7 @@ End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of
 **Tech Stack:** R  
 **Highlights:**  
 - U 
-[VIEW PROJECT HERE](https://github.com/yourusername](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
+[VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
 
 ---
 
