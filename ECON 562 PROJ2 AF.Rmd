@@ -1,0 +1,1289 @@
+---
+title: "ECON 562: PROJECT 2"
+author: "Andrew Frohner"
+date: "2025-04-09"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    code_folding: hide
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=FALSE , results= 'hide' , message=FALSE}
+# Set CRAN mirror and Install kernlab, ggplot2, and dplyr packages
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+```
+ 
+```{css, echo=FALSE}
+h1,  h3 {
+  font-weight: bold;
+  text-decoration: underline;
+  color: blue;
+  font-size: 4em;
+}
+
+h2 {
+  font-weight: bold;
+  text-decoration: none;
+  color: green;
+  font-size: 3em;
+}
+
+h4, h5{
+  font-weight: normal;
+  text-decoration: none;
+  color: black;
+  font-size: 2.0em;
+}  
+ h6 {
+  font-weight: bold;
+  text-decoration: none;
+  color: red;
+  font-size: 1em;
+  
+ }
+```
+
+
+
+<!--- Load required libraries --->
+```{r, message=FALSE, warning=FALSE, results='hide'}
+library(kernlab)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(caret)
+library(e1071)
+library(ggpubr)
+#load the glmnet package
+library(glmnet)
+#load the MASS package
+library(MASS)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+#load the lars package
+install.packages("lars")
+library(lars)
+
+#load the diabetes data set
+data(diabetes)
+
+data.all <- data.frame(cbind(diabetes$x, y=diabetes$y))
+```
+
+<h1> Data Quality Check </h1>
+
+```{r}
+#dimensions of the data set
+dim(data.all)
+cat("The dimensions of the DataSet are: ", dim(data.all)[1], " rows and ", dim(data.all)[2], " columns.\n")
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+#Generate summary statistics of the data using the describle function
+# from the psych package
+#install.packages("psych")
+library(psych)
+#summary statistics
+describe(data.all)
+
+
+```
+
+```{r}
+#Check for missing values
+missing_values <- colSums(is.na(data.all))
+missing_values <- missing_values[missing_values > 0]
+if (length(missing_values) > 0) {
+  cat("Missing values found in the following columns:\n")
+  print(missing_values)
+} else {
+  cat("No missing values found in the dataset.\n")
+}
+
+```
+
+<h1> Quartiles </h1>
+
+```{r}
+#compute the 25th, 50th, and 75th percentiles for all variables
+quantiles <- apply(data.all, 2, function(x) quantile(x, probs = c(0.25, 0.5, 0.75)))
+#display the quantiles round to 3 decimal places
+quantiles <- round(quantiles, 3)
+#display the quantiles in column format
+quantiles <- as.data.frame(t(quantiles))
+#display the quantiles
+colnames(quantiles) <- c("25th Percentile", "50th Percentile", "75th Percentile")
+#display the quantiles
+quantiles
+
+```
+
+```{r}
+library(e1071)
+library(dplyr)
+library(tidyr)
+
+#calculate skewness for numeric variables
+skewness_values <- sapply(data.all, function(x) if(is.numeric(x)) skewness(x, na.rm = TRUE) else NA)
+#calculate kurtosis for numeric variables
+kurtosis_values <- sapply(data.all, function(x) if(is.numeric(x)) kurtosis(x, na.rm = TRUE) else NA)
+#combine skewness and kurtosis into a data frame
+skew_kurt <- data.frame(Skewness = skewness_values, Kurtosis = kurtosis_values)
+#remove NA values
+skew_kurt <- skew_kurt[complete.cases(skew_kurt), ]
+#display the skewness and kurtosis values
+skew_kurt <- round(skew_kurt, 3)
+#display the skewness and kurtosis values
+skew_kurt
+
+```
+
+<h1> Distributions </h1>
+
+```{r}
+#plot the distribution of the target variable y
+ggplot(data.all, aes(x = y)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of Target Variable (y)", x = "y", y = "Density") +
+  theme_minimal()
+
+
+```
+
+
+```{r}
+#grid these distributions
+library(gridExtra)
+library(grid)
+library(ggplot2)
+# Create individual plots
+p1 <- ggplot(data.all, aes(x = tc)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of TC", x = "TC", y = "Density") +
+  theme_minimal()
+p2 <- ggplot(data.all, aes(x = ldl)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of LDL", x = "LDL", y = "Density") +
+  theme_minimal()
+p3 <- ggplot(data.all, aes(x = hdl)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of HDL", x = "HDL", y = "Density") +
+  theme_minimal()
+p4 <- ggplot(data.all, aes(x = tch)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of TCH", x = "TCH", y = "Density") +
+  theme_minimal()
+p5 <- ggplot(data.all, aes(x = ltg)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of LTG", x = "LTG", y = "Density") +
+  theme_minimal()
+p6 <- ggplot(data.all, aes(x = glu)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of GLU", x = "GLU", y = "Density") +
+  theme_minimal()
+# Arrange the plots in a grid
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
+```
+
+
+```{r}
+#create individual plots for the age, sex bmi, and map variables, start at p7
+p7 <- ggplot(data.all, aes(x = age)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of Age", x = "age", y = "Density") +
+  theme_minimal()
+
+p8 <- ggplot(data.all, aes(x = sex)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of Sex", x = "sex", y = "Density") +
+  theme_minimal()
+
+p9 <- ggplot(data.all, aes(x = bmi)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of BMI", x = "bmi", y = "Density") +
+  theme_minimal()
+
+p10 <- ggplot(data.all, aes(x = map)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "blue", alpha = 0.5) +
+  geom_density(color = "red", size = 1) +
+  labs(title = "Distribution of MAP", x = "map", y = "Density") +
+  theme_minimal()
+
+#arrange the plots in a grid
+grid.arrange(p7, p8, p9, p10, ncol = 2)
+
+```
+
+<h1> Correl Matrix </h1>
+
+```{r}
+#Create a heatmap of the correaltions using corrplot
+#install.packages("corrplot")
+library(corrplot)
+# Compute the correlation matrix
+correlation_matrix <- cor(data.all, use = "pairwise.complete.obs")
+# Create a heatmap of the correlation matrix
+corrplot(correlation_matrix, method = "color", tl.col = "black", tl.srt = 45, addCoef.col = "black", number.cex = 0.7, title = "Correlation Heatmap", mar = c(0, 0, 1, 0))
+
+```
+
+<h1> Box Plots </h1>
+
+```{r}
+#Generate Boxplots for each variable
+#install.packages("ggpubr")
+library(ggpubr)
+# Create boxplots for age and overlay the observations
+bp_age <- ggplot(data.all, aes(x = "", y = age)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of Age", x = "", y = "Age") +
+  theme_minimal()
+
+
+
+bp_bmi <- ggplot(data.all, aes(x = "", y = bmi)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of BMI", x = "", y = "BMI") +
+  theme_minimal()
+
+bp_map <- ggplot(data.all, aes(x = "", y = map)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of MAP", x = "", y = "MAP") +
+  theme_minimal()
+
+bp_tc <- ggplot(data.all, aes(x = "", y = tc)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of TC", x = "", y = "TC") +
+  theme_minimal()
+
+bp_ldl <- ggplot(data.all, aes(x = "", y = ldl)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of LDL", x = "", y = "LDL") +
+  theme_minimal()
+
+bp_hdl <- ggplot(data.all, aes(x = "", y = hdl)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of HDL", x = "", y = "HDL") +
+  theme_minimal()
+bp_tch <- ggplot(data.all, aes(x = "", y = tch)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of TCH", x = "", y = "TCH") +
+  theme_minimal()
+bp_ltg <- ggplot(data.all, aes(x = "", y = ltg)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of LTG", x = "", y = "LTG") +
+  theme_minimal()
+bp_glu <- ggplot(data.all, aes(x = "", y = glu)) +
+  geom_boxplot(fill = "lightblue", outlier.colour = "red", outlier.size = 1.5) +
+  geom_jitter(color = "black", size = 0.5, alpha = 0.5) +
+  labs(title = "Boxplot of GLU", x = "", y = "GLU") +
+  theme_minimal()
+
+
+# Arrange the boxplots in a grid
+library(gridExtra)
+library(grid)
+library(ggplot2)
+
+#Arrange the boxplots in a 3x3 grid
+grid.arrange(bp_age, bp_bmi, bp_map, bp_tc, bp_ldl, bp_hdl, ncol = 3)
+# Arrange the boxplots in a 3x3 grid
+grid.arrange(bp_tch, bp_ltg, bp_glu, ncol = 3)
+
+
+
+```
+<h1> Outliers </h1>
+
+```{r}
+#count the number of observations 2x above the 75th percentile
+#for each variable
+#install the dplyr package
+library(dplyr)
+
+# Create a function to count the number of observations 2x  above the 75th percentile
+count_above_75th <- function(x) {
+  threshold <- quantile(x, 0.75, na.rm = TRUE)
+  sum(x > (2 * threshold), na.rm = TRUE)
+}
+
+
+#apply the function to each variable
+outliers_count <- sapply(data.all, count_above_75th)
+
+# Create a data frame to display the results
+outliers_df <- data.frame(Variable = names(outliers_count), Outliers_Count = outliers_count)
+# Display the results
+outliers_df <- outliers_df %>%
+  arrange(desc(Outliers_Count)) %>%
+  mutate(Outliers_Count = as.integer(Outliers_Count))
+
+#count the outliers for each variable
+outliers_df <- outliers_df %>%
+  mutate(Outliers_Count = ifelse(Outliers_Count > 0, Outliers_Count, NA))
+
+print(outliers_df)
+
+```
+
+```{r}
+#count the number of observations 2x below the 25th percentile
+#for each variable
+# Create a function to count the number of observations below the 25th percentile
+count_below_25th <- function(x) {
+  threshold <- quantile(x, 0.25, na.rm = TRUE)
+  sum(x < (2 *threshold), na.rm = TRUE)
+}
+
+#apply the function to each variable
+outliers_count_below <- sapply(data.all, count_below_25th)
+# Create a data frame to display the results
+outliers_df_below <- data.frame(Variable = names(outliers_count_below), Outliers_Count = outliers_count_below)
+# Display the results
+outliers_df_below <- outliers_df_below %>%
+  arrange(desc(Outliers_Count)) %>%
+  mutate(Outliers_Count = as.integer(Outliers_Count))
+#count the outliers for each variable
+outliers_df_below <- outliers_df_below %>%
+  mutate(Outliers_Count = ifelse(Outliers_Count > 0, Outliers_Count, NA))
+print(outliers_df_below)
+
+
+```
+
+
+```{r}
+#scale age bmi map tc ldl hdl tch ltg glu by MAD
+#install.packages("robustbase")
+library(robustbase)
+# Load required library
+library(car)
+
+# Perform Yeo-Johnson transformation
+vars_to_transform <- setdiff(names(data.all), c("sex", "y"))
+yj <- powerTransform(data.all[vars_to_transform], family = "yjPower")  # Estimate lambda
+data.all.scaled <- data.all
+data.all.scaled[vars_to_transform] <- yjPower(data.all[vars_to_transform], coef(yj))
+
+#check the scaled data
+head(data.all.scaled)
+#check the dimensions of the scaled data
+cat("The dimensions of the scaled DataSet are: ", dim(data.all.scaled)[1], " rows and ", dim(data.all.scaled)[2], " columns.\n")
+#check the summary statistics of the scaled data
+summary(data.all.scaled)
+#check the skewness and kurtosis of the scaled data
+skewness_values_scaled <- sapply(data.all.scaled, function(x) if(is.numeric(x)) skewness(x, na.rm = TRUE) else NA)
+kurtosis_values_scaled <- sapply(data.all.scaled, function(x) if(is.numeric(x)) kurtosis(x, na.rm = TRUE) else NA)
+#combine skewness and kurtosis into a data frame
+skew_kurt_scaled <- data.frame(Skewness = skewness_values_scaled, Kurtosis = kurtosis_values_scaled)
+#remove NA values
+skew_kurt_scaled <- skew_kurt_scaled[complete.cases(skew_kurt_scaled), ]
+#display the skewness and kurtosis values
+skew_kurt_scaled <- round(skew_kurt_scaled, 3)
+#display the skewness and kurtosis values
+skew_kurt_scaled
+
+
+
+```
+```{r}
+#count the number of observations with a absolute value of z-score greater than 3
+#for each variable
+# Create a function to count the number of observations with absolute z-score > 3
+count_above_3 <- function(x) {
+  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  sum(abs(z_scores) > 3, na.rm = TRUE)
+}
+
+#apply the function to the scaled data
+outliers_count_3 <- sapply(data.all.scaled, count_above_3)
+# Create a data frame to display the results
+outliers_df_3 <- data.frame(Variable = names(outliers_count_3), Outliers_Count = outliers_count_3)
+# Display the results
+outliers_df_3 <- outliers_df_3 %>%
+  arrange(desc(Outliers_Count)) %>%
+  mutate(Outliers_Count = as.integer(Outliers_Count))
+#count the outliers for each variable
+outliers_df_3 <- outliers_df_3 %>%
+  mutate(Outliers_Count = ifelse(Outliers_Count > 0, Outliers_Count, NA))
+print(outliers_df_3)
+
+
+```
+
+
+```{r}
+#change the values of observations with Z-scores greater than 3 to to the 90th percentile value
+#for each variable
+# Create a function to replace outliers with the 90th percentile value
+replace_outliers <- function(x) {
+  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  threshold <- quantile(x, 0.90, na.rm = TRUE)
+  x[abs(z_scores) > 3] <- threshold
+  return(x)
+}
+
+#apply the function to the scaled data
+data.all.scaled <- data.all.scaled %>%
+  mutate(across(c(age, bmi, map, tc, ldl, hdl, tch, ltg, glu), 
+                ~ replace_outliers(.)))
+
+#count the number of observations with a absolute value of z-score greater than 3
+#for each variable
+# Create a function to count the number of observations with absolute z-score > 3
+count_above_3 <- function(x) {
+  z_scores <- (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  sum(abs(z_scores) > 3, na.rm = TRUE)
+}
+
+#apply this to the scaled data
+outliers_count_3 <- sapply(data.all.scaled, count_above_3)
+# Create a data frame to display the results
+outliers_df_3 <- data.frame(Variable = names(outliers_count_3), Outliers_Count = outliers_count_3)
+# Display the results
+outliers_df_3 <- outliers_df_3 %>%
+  arrange(desc(Outliers_Count)) %>%
+  mutate(Outliers_Count = as.integer(Outliers_Count))
+#count the outliers for each variable
+outliers_df_3 <- outliers_df_3 %>%
+  mutate(Outliers_Count = ifelse(Outliers_Count > 0, Outliers_Count, NA))
+print(outliers_df_3)
+
+
+
+
+
+
+```
+
+
+```{r}
+#Partition the scaled data into training and test sets
+set.seed(123) # Set seed for reproducibility
+train_index <- createDataPartition(data.all.scaled$y, p = 0.7, list = FALSE)
+train_data <- as.data.frame(data.all.scaled[train_index, ])
+test_data <- as.data.frame(data.all.scaled[-train_index, ])
+# Check the dimensions of the training and test sets
+cat("Training set dimensions are: ", dim(train_data)[1], " rows and ", dim(train_data)[2], " columns.\n")
+cat("Test set dimensions : ", dim(test_data)[1], " rows and ", dim(test_data)[2], " columns.\n")
+
+
+dim(test_data)
+
+```
+
+<h1> Linear Model </h1>
+
+
+```{r}
+library(caret)
+#fit linear model to predict y using all other variables
+#apply 10 fold cross validation
+set.seed(123) # Set seed for reproducibility
+cv_LM <- train(y ~ ., data = train_data, method = "lm", trControl = trainControl(method = "cv", number = 10))
+```
+
+```{r , warning=FALSE}
+#check the summary of the linear model using stargazer
+#install.packages("stargazer")
+library(stargazer)
+stargazer(cv_LM$finalModel, type = "text", title = "Raw Data Regression Summary", digits = 3, single.row = TRUE)
+
+```
+
+```{r, warning=FALSE}
+library(stargazer)
+#fit a null model
+null_model <- lm(y ~ 1, data = train_data)
+#check the summary of the null model
+stargazer(null_model, type = "text", title = "Null Model Summary", digits = 3, single.row = TRUE)
+
+```
+
+
+
+```{r}
+#predict the y values using the linear model
+predictions_LM <- predict(cv_LM, newdata = test_data)
+
+#copmute the mean prediction error
+mean_prediction_error_LM <- mean(abs(predictions_LM - test_data$y))
+#compute the mean squared error
+mean_squared_error_LM <- mean((predictions_LM - test_data$y)^2)
+#compute the RSS
+residual_sum_of_squares_LM <- sum((predictions_LM - test_data$y)^2)
+#compute the R squared value
+r_squared_LM <- 1 - (residual_sum_of_squares_LM / sum((test_data$y - mean(test_data$y))^2))
+#compute the BIC
+bic_LM <- BIC(cv_LM$finalModel)
+#Compute the MAD
+mad_LM <- mad(predictions_LM - test_data$y)
+LR_stat <- 2 * (logLik(cv_LM$finalModel) - logLik(null_model))
+
+#combine the results into a data frame
+results_LM <- data.frame(
+  Model = "Linear Model",
+  Mean_Prediction_Error = mean_prediction_error_LM,
+  MSE = mean_squared_error_LM,
+  RSS = residual_sum_of_squares_LM,
+  MAD = mad_LM,
+  Rsquared = r_squared_LM,
+  BIC = bic_LM,
+  LR_stat = LR_stat
+)
+
+
+#format as a kable
+#install.packages("kableExtra")
+library(kableExtra)
+results_LM %>%
+  kable("html", caption = "Linear Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_LM), background = "lightblue")
+
+
+
+```
+
+
+
+```{r}
+#Caculate the standard error of the mean prediction error 
+#using the bootstrap method
+#install.packages("boot")
+library(boot)
+# Define a function to calculate the mean prediction error
+mean_prediction_error <- function(data, indices) {
+  # Resample the data
+  resampled_data <- data[indices, ]
+  # Fit the model on the resampled data
+  model <- lm(y ~ ., data = resampled_data)
+  # Predict on the test set
+  predictions <- predict(model, newdata = test_data)
+  # Calculate the mean prediction error
+  mean(abs(predictions - test_data$y))
+}
+
+
+```
+```{r}
+# Perform bootstrap resampling
+set.seed(123) # Set seed for reproducibility
+boot_results <- boot(data = train_data, statistic = mean_prediction_error, R = 1000)
+# Calculate the standard error of the mean prediction error
+mean_prediction_error_se <- sd(boot_results$t)
+cat("The standard error of the mean prediction error is:", mean_prediction_error_se, "\n")
+
+```
+
+
+```{r}
+#plot the residual vs predicted
+library(ggplot2)
+# Create a data frame with fitted values and residuals
+residuals_plot_data <- data.frame(
+  Fitted = cv_LM$finalModel$fitted.values,
+  Residuals = cv_LM$finalModel$residuals
+)
+
+# Create the residuals vs fitted plot
+ggplot(residuals_plot_data, aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(
+    title = "Residuals vs Fitted Values",
+    x = "Fitted Values",
+    y = "Residuals"
+  ) +
+  theme_minimal()
+
+```
+
+<h1> Best Subset </h1>
+
+
+```{r, warning=FALSE, message=FALSE}
+#setup parrallel processing
+library(doParallel)
+#detect the number of cores
+numCores <- detectCores()
+#setup the cluster
+cl <- makeCluster(5)
+#register the cluster
+registerDoParallel(cl)
+
+
+#Apply best subset selection 
+install.packages("leaps")
+library(leaps)
+library(caret)
+# Create 10 folds for cross-validation
+set.seed(562)  # For reproducibility
+folds <- createFolds(train_data$y, k = 10, list = TRUE, returnTrain = TRUE)
+
+# Initialize a matrix to store validation errors for each fold and subset size
+cv_bic <- matrix(NA, nrow = 10, ncol = 10)  # 10 folds, 10 subset sizes (nvmax)
+
+# Perform cross-validation
+for (i in seq_along(folds)) {
+  # Split the data into training and validation sets
+  training_indices <- folds[[i]]
+  training_data <- train_data[training_indices, ]
+  validation_data <- train_data[-training_indices, ]
+
+#Loop through each subset size
+for (j in 1:10) {
+    # Fit the best subset model
+    best_subset <- regsubsets(y ~ ., data = training_data, nvmax = j)
+    
+    # Get the coefficients for the best model
+    best_model <- which.min(summary(best_subset)$bic)
+    best_model_coefficients <- coef(best_subset, best_model)
+    
+    # Create a linear model using the selected variables
+    selected_vars <- names(best_model_coefficients)[-1]  # Exclude intercept
+    formula <- as.formula(paste("y ~", paste(selected_vars, collapse = "+")))
+    lm_model <- lm(formula, data = training_data)
+    
+    # Predict on the validation set
+    predictions <- predict(lm_model, newdata = validation_data)
+    
+    # Calculate BIC for the model
+    bic_value <- BIC(lm_model)
+    
+    # Store the BIC value
+    cv_bic[i, j] <- bic_value
+  }
+}
+
+# Calculate the average BIC for each subset size
+avg_bic <- colMeans(cv_bic, na.rm = TRUE)
+
+# Find the best subset size based on average BIC
+best_subset_size <- which.min(avg_bic)
+
+cat("The best subset size based on 10-fold cross-validated BIC is:", best_subset_size, "\n")
+
+# Stop the cluster
+stopCluster(cl)
+
+
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+
+#Get the coefficients to extract the predictors for the best subset size
+best_model_coefficients <- coef(best_subset, best_subset_size)
+
+# Get the names of the selected variables
+selected_vars <- names(best_model_coefficients)[-1]  # Exclude intercept
+cat("The selected variables for the best subset size are:", selected_vars, "\n")
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+library(stargazer)
+#Create linear model from the best subset selection
+# Create a formula for the best subset model
+formula_best_subset <- as.formula(paste("y ~", paste(selected_vars, collapse = "+")))
+# Fit the best subset model using the training data
+best_model_LM <- lm(formula_best_subset, data = train_data)
+# Check the summary of the best subset model
+stargazer(best_model_LM, type = "text", title = "Best Subset Selection Model Summary", digits = 3, single.row = TRUE)
+
+```
+
+
+
+```{r}
+#predict the y values using the best model
+predictions_best_model <- predict(best_model_LM, newdata = test_data)
+#compute the mean prediction error
+mean_prediction_error_best_model <- mean(abs(predictions_best_model - test_data$y))
+#compute the mean squared error
+mean_squared_error_best_model <- mean((predictions_best_model - test_data$y)^2)
+#compute the RSS
+residual_sum_of_squares_best_model <- sum((predictions_best_model - test_data$y)^2)
+#compute the R squared value
+r_squared_best_model <- 1 - (residual_sum_of_squares_best_model / sum((test_data$y - mean(test_data$y))^2))
+#compute the BIC
+bic_best_model <- BIC(best_model_LM)
+#compute the MAD
+mad_best_model <- mad(predictions_best_model - test_data$y)
+#compute the LR statistic
+LR_stat_best_model <- 2 * (logLik(cv_LM$finalModel) - logLik(best_model_LM)) 
+#combine the results into a data frame
+results_best_model <- data.frame(
+  Model = "Best Subset Selection Model",
+  Mean_Prediction_Error = mean_prediction_error_best_model,
+  MSE = mean_squared_error_best_model,
+  MAD = mad_best_model,
+  RSS = residual_sum_of_squares_best_model,
+  Rsquared = r_squared_best_model,
+  BIC = bic_best_model,
+  LR_stat = LR_stat_best_model
+)
+
+#format as a kable
+results_best_model %>%
+  kable("html", caption = "Best Subset Selection Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_best_model), background = "lightblue")
+
+
+```
+
+```{r}
+#plot the residual vs predicted
+library(ggplot2)
+# Create a data frame with predictions and residuals
+ggplot(data = data.frame(Fitted = best_model_LM$fitted.values, Residuals = best_model_LM$residuals), aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Residuals vs Fitted Values (Best Subset Model)", x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+
+```
+
+<h1> Ridge </h1>
+
+```{r}
+#install glmnet
+#install.packages("glmnet")
+library(glmnet)
+
+# Create a matrix of predictors and a vector of response variable
+x <- as.matrix(train_data[, -which(names(train_data) == "y")])
+y <- train_data$y
+
+#Perform Ridge regression with cross-validation
+set.seed(562) # Set seed for reproducibility
+cv_ridge <- cv.glmnet(x, y, alpha = 0, nfolds = 10)
+
+# Plot the cross-validation results
+plot(cv_ridge)
+
+#highlight the 1SE lambda with green vertical line
+abline(v = log(cv_ridge$lambda.1se), col = "green", lty = 2, lwd = 2)
+#add legend to the plot denoting teh 1SE lambda
+legend("topright", legend = "1SE Lambda", col = "green", lty = 2, lwd = 2)
+
+
+#Extract the 1SE lambda
+lambda_ridge <- cv_ridge$lambda.1se
+cat("The optimal lambda for Ridge regression is:", lambda_ridge, "\n")
+
+
+
+```
+
+```{r}
+library(glmnet)
+library(kableExtra)
+library(dplyr)
+# Fit the Ridge regression model using the 1SE lambda
+ridge_model <- glmnet(x, y, alpha = 0, lambda = lambda_ridge)
+# Predict on the test set
+predictions_ridge <- predict(ridge_model, s = lambda_ridge, newx = as.matrix(test_data[, -which(names(test_data) == "y")]))
+# Compute the mean prediction error
+mean_prediction_error_ridge <- mean(abs(predictions_ridge - test_data$y))
+# Compute the mean squared error
+mean_squared_error_ridge <- mean((predictions_ridge - test_data$y)^2)
+# Compute the RSS
+residual_sum_of_squares_ridge <- sum((predictions_ridge - test_data$y)^2)
+# Compute the R squared value
+r_squared_ridge <- 1 - (residual_sum_of_squares_ridge / sum((test_data$y - mean(test_data$y))^2))
+# Compute the MAD
+mad_ridge <- mad(predictions_ridge - test_data$y)
+# Compute the LR statistic
+n <- length(y)
+sigma_squared_Ridge <- residual_sum_of_squares_ridge/n
+logLik_ridge <- -n/2 * log(2 * pi) - n/2 * log(sigma_squared_Ridge) - 1/(2 * sigma_squared_Ridge) * residual_sum_of_squares_ridge
+
+LR_stat_ridge <- 2 * ( logLik(cv_LM$finalModel) - logLik_ridge)
+# Compute the BIC
+# Manually calculate BIC
+n <- nrow(train_data)  # Number of observations
+k <- length(coef(ridge_model, s = lambda_ridge)) 
+# Number of parameters (including intercept)
+bic_ridge <- n * log(residual_sum_of_squares_ridge / n) + log(n) * k
+
+# Combine the results into a data frame
+results_ridge <- data.frame(
+  Model = "Ridge Regression Model",
+  Mean_Prediction_Error = mean_prediction_error_ridge,
+  MSE = mean_squared_error_ridge,
+  MAD = mad_ridge,
+  RSS = residual_sum_of_squares_ridge,
+  Rsquared = r_squared_ridge,
+  BIC = bic_ridge,
+  LR_stat = LR_stat_ridge
+  
+)
+#format as a kable
+results_ridge %>%
+  kable("html", caption = "Ridge Regression Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_ridge), background = "lightblue")
+
+#install the broom package
+#install.packages("broom")
+library(broom)
+#tidy the ridge model
+ridge_model_tidy <- tidy(ridge_model, s = lambda_ridge)
+#format the ridge model coefficients as a kable
+ridge_model_tidy %>%
+  kable("html", caption = "Ridge Regression Model Coefficients") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:3, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(ridge_model_tidy), background = "lightblue")
+
+#grid the 2 kables
+library(gridExtra)
+library(grid)
+library(htmltools)
+# Create individual plots
+p12 <- results_ridge %>%
+  kable("html", caption = "Ridge Regression Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_ridge), background = "lightblue")
+
+p13 <- ridge_model_tidy %>%
+  kable("html", caption = "Ridge Regression Model Coefficients") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:3, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(ridge_model_tidy), background = "lightblue")
+
+```
+
+
+
+
+```{r}
+#plot the residual vs predicted from the ridge model
+library(ggplot2)
+# Create a data frame with predictions and residuals
+predictions_ridge <- as.vector(predictions_ridge)
+residuals_ridge <- as.vector(predictions_ridge - test_data$y)
+ggplot(data = data.frame(Fitted = predictions_ridge, Residuals = residuals_ridge), aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Residuals vs Fitted Values (Ridge Model)", x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+
+
+
+
+
+```
+
+<h1> LASSO </h1>
+
+
+```{r}
+library(glmnet)
+#Perform Lasso regression with cross validation
+set.seed(562) # Set seed for reproducibility
+cv_lasso <- cv.glmnet(x, y, alpha = 1, nfolds = 10)
+# Plot the cross-validation results
+plot(cv_lasso)
+
+#Extract the 1SE lambda
+lambda_lasso <- cv_lasso$lambda.1se
+cat("The optimal lambda for Lasso regression is:", lambda_lasso, "\n")
+#highlight the 1SE lambda with green vertical line
+abline(v = log(cv_lasso$lambda.1se), col = "green", lty = 2, lwd = 2)
+
+#add legend to the plot denoting the 1SE lambda
+legend("topright", legend = "1SE Lambda", col = "green", lty = 2, lwd = 2)
+
+
+
+```
+```{r}
+# Fit the Lasso regression model using the 1SE lambda
+lasso_model <- glmnet(x, y, alpha = 1, lambda = lambda_lasso)
+# Predict on the test set
+predictions_lasso <- predict(lasso_model, s = lambda_lasso, newx = as.matrix(test_data[, -which(names(test_data) == "y")]))
+# Compute the mean prediction error
+mean_prediction_error_lasso <- mean(abs(predictions_lasso - test_data$y))
+# Compute the mean squared error
+mean_squared_error_lasso <- mean((predictions_lasso - test_data$y)^2)
+# Compute the RSS
+residual_sum_of_squares_lasso <- sum((predictions_lasso - test_data$y)^2)
+# Compute the R squared value
+r_squared_lasso <- 1 - (residual_sum_of_squares_lasso / sum((test_data$y - mean(test_data$y))^2))
+#compute the MAD
+mad_lasso <- mad(predictions_lasso - test_data$y)
+# Compute the LR statistic
+n <- length(y)
+sigma_squared_Lasso <- residual_sum_of_squares_lasso/n
+logLik_lasso <- -n/2 * log(2 * pi) - n/2 * log(sigma_squared_Lasso) - 1/(2 * sigma_squared_Lasso) * residual_sum_of_squares_lasso
+LR_stat_lasso <- 2 * ( logLik(cv_LM$finalModel) - logLik_lasso)
+
+# Compute the BIC
+# Manually calculate BIC
+n <- nrow(train_data)  # Number of observations
+k <- length(coef(lasso_model, s = lambda_lasso))
+# Number of parameters (including intercept)
+bic_lasso <- n * log(residual_sum_of_squares_lasso / n) + log(n) * k
+# Combine the results into a data frame
+results_lasso <- data.frame(
+  Model = "Lasso Regression Model",
+  Mean_Prediction_Error = mean_prediction_error_lasso,
+  MSE = mean_squared_error_lasso,
+  MAD = mad_lasso,
+  RSS = residual_sum_of_squares_lasso,
+  Rsquared = r_squared_lasso,
+  BIC = bic_lasso,
+  LR_stat = LR_stat_lasso
+)
+
+#format as a kable
+results_lasso %>%
+  kable("html", caption = "Lasso Regression Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_lasso), background = "lightblue")
+
+#install the broom package
+#install.packages("broom")
+library(broom)
+#tidy the lasso model
+lasso_model_tidy <- tidy(lasso_model, s = lambda_lasso)
+#format the lasso model coefficients as a kable
+lasso_model_tidy %>%
+  kable("html", caption = "Lasso Regression Model Coefficients") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:3, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(lasso_model_tidy), background = "lightblue")
+
+
+```
+
+```{r}
+#create a vector of the predicted values
+predictions_lasso <- as.vector(predictions_lasso)
+residuals_lasso <- as.vector(predictions_lasso - test_data$y)
+#plot the residual vs predicted from the lasso model
+library(ggplot2)
+# Create a data frame with predictions and residuals
+ggplot(data = data.frame(Fitted = predictions_lasso, Residuals = residuals_lasso), aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Residuals vs Fitted Values (Lasso Model)", x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+
+```
+
+<h1> Metrics Table </h1>
+
+```{r}
+library(dplyr)
+#create 1 data table with all the results
+# Combine all results into a single data frame
+all_results <- rbind(results_LM, results_best_model, results_ridge, results_lasso)
+#format as a kable
+all_results %>%
+  kable("html", caption = "All Model Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(all_results), background = "lightblue")
+
+
+
+
+
+```
+<h1> Scatter Plots </h1>
+
+```{r}
+
+#create a line plot for all variables with y
+# Create a line plot for all variables with y
+library(ggplot2)
+library(gridExtra)
+# Create individual plots for each variable
+p7 <- ggplot(data.all, aes(x = age, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "Age vs Y", x = "Age", y = "Y") +
+  theme_minimal()
+p8 <- ggplot(data.all, aes(x = bmi, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "BMI vs Y", x = "BMI", y = "Y") +
+  theme_minimal()
+p9 <- ggplot(data.all, aes(x = map, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "MAP vs Y", x = "MAP", y = "Y") +
+  theme_minimal()
+p10 <- ggplot(data.all, aes(x = tc, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "TC vs Y", x = "TC", y = "Y") +
+  theme_minimal()
+p11 <- ggplot(data.all, aes(x = ldl, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "LDL vs Y", x = "LDL", y = "Y") +
+  theme_minimal()
+p12 <- ggplot(data.all, aes(x = hdl, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "HDL vs Y", x = "HDL", y = "Y") +
+  theme_minimal()
+p13 <- ggplot(data.all, aes(x = tch, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "TCH vs Y", x = "TCH", y = "Y") +
+  theme_minimal()
+p14 <- ggplot(data.all, aes(x = ltg, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "LTG vs Y", x = "LTG", y = "Y") +
+  theme_minimal()
+p15 <- ggplot(data.all, aes(x = glu, y = y)) +
+  geom_line(color = "blue") +
+  labs(title = "GLU vs Y", x = "GLU", y = "Y") +
+  theme_minimal()
+# Arrange the plots in a grid
+grid.arrange(p7, p8, p9, p10, p11, p12, p13, p14, p15, ncol = 3)
+# Arrange the plots in a grid
+grid.arrange(p7, p8, p9, p10, p11, p12, ncol = 3)
+# Arrange the plots in a grid
+grid.arrange(p13, p14, p15, ncol = 3)
+
+```
+
+```{r}
+#create a scatter plot for each variable with y
+# Create a scatter plot for each variable with y
+library(ggplot2)
+library(gridExtra)
+# Create individual scatter plots for each variable
+p1 <- ggplot(data.all, aes(x = age, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "Age vs Y", x = "Age", y = "Y") +
+  theme_minimal()
+p2 <- ggplot(data.all, aes(x = bmi, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "BMI vs Y", x = "BMI", y = "Y") +
+  theme_minimal()
+p3 <- ggplot(data.all, aes(x = map, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "MAP vs Y", x = "MAP", y = "Y") +
+  theme_minimal()
+p4 <- ggplot(data.all, aes(x = tc, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "TC vs Y", x = "TC", y = "Y") +
+  theme_minimal()
+p5 <- ggplot(data.all, aes(x = ldl, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "LDL vs Y", x = "LDL", y = "Y") +
+  theme_minimal()
+p6 <- ggplot(data.all, aes(x = hdl, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "HDL vs Y", x = "HDL", y = "Y") +
+  theme_minimal()
+p7 <- ggplot(data.all, aes(x = tch, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "TCH vs Y", x = "TCH", y = "Y") +
+  theme_minimal()
+p8 <- ggplot(data.all, aes(x = ltg, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "LTG vs Y", x = "LTG", y = "Y") +
+  theme_minimal()
+p9 <- ggplot(data.all, aes(x = glu, y = y)) +
+  geom_point(color = "blue") +
+  labs(title = "GLU vs Y", x = "GLU", y = "Y") +
+  theme_minimal()
+# Arrange the plots in a grid
+grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, ncol = 3)
+# Arrange the plots in a grid
+grid.arrange(p1, p2, p3, p4, p5, p6, ncol = 3)
+# Arrange the plots in a grid
+grid.arrange(p7, p8, p9, ncol = 3)
+
+```
+
+<h1> Alternate Ridge_ Quadratics </h1>
+
+
+```{r}
+
+#square the BMI from the data all scaled data and add it to the data frame
+# Create a new variable for squared BMI
+#install the dplyr package
+library(dplyr)
+
+
+#Create a new variable for bmi squared
+data.all.scaled2 <- data.all.scaled  %>%
+  mutate(bmi_squared = bmi^2)
+
+#create a new variable for htl squared
+data.all.scaled2 <- data.all.scaled  %>%
+  mutate(htl_squared = hdl^2)
+
+str(data.all.scaled2)
+head(data.all.scaled2)
+
+#partion the data into training and test sets
+set.seed(123) # Set seed for reproducibility
+train_index2 <- createDataPartition(data.all.scaled2$y, p = 0.7, list = FALSE)
+train_data2 <- as.data.frame(data.all.scaled2[train_index2, ])
+test_data2<- as.data.frame(data.all.scaled2[-train_index2, ])
+# Check the dimensions of the training and test sets
+cat("Training set dimensions are: ", dim(train_data2)[1], " rows and ", dim(train_data2)[2], " columns.\n")
+cat("Test set dimensions : ", dim(test_data2)[1], " rows and ", dim(test_data2)[2], " columns.\n")
+
+
+
+
+```
+
+```{r}
+#perform a ridge model with cross validation
+# Create a matrix of predictors and a vector of response variable
+x2 <- as.matrix(train_data2[, -which(names(train_data2) == "y")])
+y2 <- train_data2$y
+#Perform Ridge regression with cross-validation
+set.seed(562) # Set seed for reproducibility
+cv_ridge2 <- cv.glmnet(x2, y2, alpha = 0, nfolds = 10)
+# Plot the cross-validation results
+plot(cv_ridge2)
+
+#highlight the 1SE lambda with green vertical line
+abline(v = log(cv_ridge2$lambda.1se), col = "green", lty = 2, lwd = 2)
+#add legend to the plot denoting teh 1SE lambda
+legend("topright", legend = "1SE Lambda", col = "green", lty = 2, lwd = 2)
+#Extract the 1SE lambda
+lambda_ridge2 <- cv_ridge2$lambda.1se
+cat("The optimal lambda for Ridge regression is:", lambda_ridge2, "\n")
+```
+
+
+```{r}
+# Fit the Ridge regression model using the 1SE lambda
+ridge_model2 <- glmnet(x2, y2, alpha = 0, lambda = lambda_ridge2)
+# Predict on the test set
+predictions_ridge2 <- predict(ridge_model2, s = lambda_ridge2, newx = as.matrix(test_data2[, -which(names(test_data2) == "y")]))
+# Compute the mean prediction error
+mean_prediction_error_ridge2 <- mean(abs(predictions_ridge2 - test_data2$y))
+# Compute the mean squared error
+mean_squared_error_ridge2 <- mean((predictions_ridge2 - test_data2$y)^2)
+# Compute the RSS
+residual_sum_of_squares_ridge2 <- sum((predictions_ridge2 - test_data2$y)^2)
+# Compute the R squared value
+r_squared_ridge2 <- 1 - (residual_sum_of_squares_ridge2 / sum((test_data2$y - mean(test_data2$y))^2))
+# Compute the MAD
+mad_ridge2 <- mad(predictions_ridge2 - test_data2$y)
+# Compute the LR statistic
+n2 <- length(y2)
+sigma_squared_Ridge2 <- residual_sum_of_squares_ridge2/n2
+logLik_ridge2 <- -n2/2 * log(2 * pi) - n2/2 * log(sigma_squared_Ridge2) - 1/(2 * sigma_squared_Ridge2) * residual_sum_of_squares_ridge2
+LR_stat_ridge2 <- 2 * ( logLik(cv_LM$finalModel) - logLik_ridge2)
+# Compute the BIC
+# Manually calculate BIC
+n2 <- nrow(train_data2)  # Number of observations
+k2 <- length(coef(ridge_model2, s = lambda_ridge2))
+# Number of parameters (including intercept)
+bic_ridge2 <- n2 * log(residual_sum_of_squares_ridge2 / n2) + log(n2) * k2
+# Combine the results into a data frame
+results_ridge2 <- data.frame(
+  Model = "Ridge Regression Model with BMI Squared",
+  Mean_Prediction_Error = mean_prediction_error_ridge2,
+  MSE = mean_squared_error_ridge2,
+  MAD = mad_ridge2,
+  RSS = residual_sum_of_squares_ridge2,
+  Rsquared = r_squared_ridge2,
+  BIC = bic_ridge2,
+  LR_stat = LR_stat_ridge2
+)
+#format as a kable
+results_ridge2 %>%
+  kable("html", caption = "Ridge Regression Model with BMI Squared Results") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:5, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(results_ridge2), background = "lightblue")
+
+```
+```{r}
+#show the coefficient estimates
+#install the broom package
+#install.packages("broom")
+library(broom)
+#tidy the ridge model
+ridge_model2_tidy <- tidy(ridge_model2, s = lambda_ridge2)
+#format the ridge model coefficients as a kable
+ridge_model2_tidy %>%
+  kable("html", caption = "Ridge Regression Model with BMI Squared Coefficients") %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(2:3, color = "black") %>%
+  row_spec(0, bold = TRUE, color = "white", background = "Grey") %>%
+  row_spec(1:nrow(ridge_model2_tidy), background = "lightblue")
+
+```
+
+```{r}
+# Create a data frame with predictions and residuals
+predictions_ridge2 <- as.vector(predictions_ridge2)
+residuals_ridge2 <- as.vector(predictions_ridge2 - test_data2$y)
+#plot the residual vs predicted from the ridge model
+library(ggplot2)
+# Create a data frame with predictions and residuals
+ggplot(data = data.frame(Fitted = predictions_ridge2, Residuals = residuals_ridge2), aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Residuals vs Fitted Values (Ridge Model with BMI Squared)", x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+
+```
+
