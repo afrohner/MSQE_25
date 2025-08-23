@@ -23,7 +23,7 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 
 ---
 
-### 3. Options Pricing Toolkit
+### 3. Data Exploration with College Scorecard Data set
 **Description:**  
 End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
 **Tech Stack:** R  
