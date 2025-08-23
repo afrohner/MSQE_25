@@ -30,9 +30,11 @@ Modeling techniques I chose for this analysis included:
   - Generalized Additive Model (GAM)
   - Ensemble Methods
     
-[VIEW PROJECT in R Markdown HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
+[VIEW PROJECT in R Markdown HERE](https://afrohner.github.io/MSQE_25/ECON_562_FINALPROJ_mod_AF_vFinal.html)
 
-[VIEW PROJECT in PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_FINAL_PROJ_REPORT_AF_VFinal.pdf)
+[VIEW PROJECT as PowerPoint HERE](https://afrohner.github.io/MSQE_25/ECON_562_Final_AF_pptx.pdf)
+
+[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_FINAL_PROJ_REPORT_AF_VFinal.pdf)
 
 ---
 
