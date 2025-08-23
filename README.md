@@ -74,7 +74,16 @@ Using the College Scorecard data set from the US Department of education I was t
 
 ---
 
+## 5. Classification and Regression Modeling in SAS JMP Pro
+### **Description:**  
+Using the College Scorecard data set from the US Department of education I was tasked with performing exploratory dat analysis. This data set contained over 3200 individual features. I narrowed my focus to selected variables within the following categories: 
+  - Demographic 
 
+[VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
+
+[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
+
+[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_PROJECT_1_REPORT_AF_pdf.pdf)
 
 ---
 
