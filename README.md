@@ -4,7 +4,7 @@
 # 📂 Featured Projects
 
 ## 1. Asset Price Forecast
-**Description:**  
+###**Description:**  
 Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
 
 
@@ -13,7 +13,7 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 ---
 
 ## 2. Predictive Analytics Used for Consumer Banking 
-**Description:**  
+###**Description:**  
 Simulates carbon credit markets and policy impacts using econometric analysis tools.  
 
 [VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
@@ -21,7 +21,7 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 ---
 
 ## 3. Data Exploration with College Scorecard Data set
-**Description:**  
+###**Description:**  
 End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
 
 [VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
