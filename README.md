@@ -9,7 +9,7 @@ Forecasting the price of a Fama-French factor sorted portfolio using Structural 
 **Tech Stack:** R, Eviews
 **Highlights:**  
 -  
-[Repo Link](https://github.com/yourusername/FamaFrenchExplorer)
+[VIEW PROJECT HERE](https://github.com/yourusername/FamaFrenchExplorer)
 
 ---
 
@@ -19,7 +19,7 @@ Simulates carbon credit markets and policy impacts using econometric analysis to
 **Tech Stack:** R
 **Highlights:**  
 -  
-[See Rendered Project here](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
+[VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
 
 ---
 
