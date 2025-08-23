@@ -31,7 +31,12 @@ Regression models included:
 
 ## 3. Data Exploration with College Scorecard Data set
 ### **Description:**  
-End-to-end toolkit for Black-Scholes, binomial trees, and volatility modeling of equity options.  
+Using the College Scorecard data set from the US Department of education I was tasked with performing exploratory dat analysis. This data set contained over 3200 individual features. I narrowed my focus to selected variables within the following categories: 
+  - Demographic factors (Segregated and Co-ed universities)
+  - Financial Aid (Pell Grant, Federal loan %s)
+  - Student Outcomes (completion rate)
+  - Student Financial Outcomes (default rate , completion rate)
+  - Institutional factors (size, 2 yr or 4 yr degree, Public/Private, Cost of attendance)
 
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/562_PROJ1_AF.html)
 
