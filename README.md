@@ -24,7 +24,7 @@ Regression models included:
 - Ridge
 
 [VIEW PROJECT in R Markdown HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
-[VIEW PROJECT in PDF HERE](https://afrohner.github.io/MSQE_25/ECON-562-PROJ2-AF.html)
+[VIEW PROJECT in PDF HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project2_AF_PDFversion.pdf)
 
 ---
 
