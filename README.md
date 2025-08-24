@@ -79,7 +79,6 @@ Using the College Scorecard data set from the US Department of education I was t
 I have included 2 Powerpoint files here that showcase my understanding and capability in data exploration, feature engineering, and statistical modeling. Students were in the JMP Pro software environment during this course. There was no coding. This work is relevant because student success required strong understanding of regression analysis, statistics, and data processing.
 
 **Project 1**: Modeling a Corporation's Probability of Default
-
 The data set contained financial metrics of 593 corporations (2029 total observations). Students were challenged to observe the statistical properties of a large data set and engineer/select features that would be used in competing models.
 
 Competing models included:
@@ -91,7 +90,15 @@ Competing models included:
 [VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_561_Midterm_PDF_AF.pdf)
 
 Project 2: Develop a Marketing Campaign for a Non-Profit organization
-[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_PROJECT_1_REPORT_AF_pdf.pdf)
+The data set contained financial metrics of 593 corporations (2029 total observations). Students were challenged to observe the statistical properties of a large data set and engineer/select features that would be used in competing models.
+
+Competing models included:
+  - Regularized Models (Elastic Net, LASSO, Ridge)
+  - OLS
+  - PLS
+  - KNN
+  - 
+[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_561_Final_Presentation_SL_FM_AF.pdf)
 
 ---
 
