@@ -101,7 +101,7 @@ Competing models included:
   - XGBoost
   - OLS
     
-[VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_561_Final_Presentation_SL_FM_AF.pdf)
+[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_561_Final_Presentation_SL_FM_AF.pdf)
 
 ---
 
