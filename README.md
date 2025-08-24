@@ -88,7 +88,7 @@ Competing models included:
   - PLS
   - KNN
     
-[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_562_Project1_AF_pdfversion.pdf)
+[VIEW PROJECT as Powerpoint Slides HERE](https://afrohner.github.io/MSQE_25/ECON_561_Midterm_PDF_AF.pdf)
 
 Project 2: Develop a Marketing Campaign for a Non-Profit organization
 [VIEW PROJECT as Word Doc HERE](https://afrohner.github.io/MSQE_25/ECON_562_PROJECT_1_REPORT_AF_pdf.pdf)
