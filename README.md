@@ -3,7 +3,7 @@
 
 # 📂 Featured Projects
 
-## 1. Asset Price Forecast
+## 1. Capstone Project (Modeling and Forecasting a Size, Value, and Profitability-Sorted Equity Portfolio) 
 ### **Description:**  
 Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
 
