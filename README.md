@@ -59,7 +59,7 @@ Regression models included:
 
 ## 4. Data Exploration with College Scorecard Data set
 ### **Description:**  
-Using the College Scorecard data set from the US Department of education I was tasked with performing exploratory dat analysis. This data set contained over 3200 individual features. I narrowed my focus to selected variables within the following categories: 
+Using the College Scorecard data set from the US Department of education I was tasked with performing exploratory data analysis. This data set contained over 3200 individual features. I narrowed my focus to selected variables within the following categories: 
   - Demographic factors (Segregated and Co-ed universities)
   - Financial Aid (Pell Grant, Federal loan %s)
   - Student Outcomes (completion rate)
