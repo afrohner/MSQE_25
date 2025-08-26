@@ -8,7 +8,7 @@
 Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
 
 
-[VIEW PROJECT HERE](https://github.com/yourusername/FamaFrenchExplorer)
+[VIEW PROJECT HERE](https://afrohner.github.io/MSQE_25/MSQE_CAPSTONE_ExecSummary.html)
 
 ---
 ## 2. Automated ML with a large dataset
