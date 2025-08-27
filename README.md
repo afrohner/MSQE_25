@@ -5,7 +5,8 @@
 
 ## 1. Capstone Project (Modeling and Forecasting a Size, Value, and Profitability-Sorted Equity Portfolio) 
 ### **Description:**  
-Forecasting the price of a Fama-French factor sorted portfolio using Structural Multi-equation modeling, VAR , BVAR, and ARIMA  
+Forecasting the price of a Fama-French factor sorted portfolio using  Multi-equation modeling, VAR , BVAR, and ARIMA.
+  
 
 
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/MSQE_CAPSTONE_ES2.html)
