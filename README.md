@@ -7,9 +7,9 @@
 ### **Description:**  
 Forecasting the price of a Fama-French factor sorted portfolio using  Multi-equation modeling, VAR , BVAR, and ARIMA.
   
-
-
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/MSQE_CAPSTONE_ES2.html)
+
+[VIEW PROJECT as PDF  HERE](https://afrohner.github.io/MSQE_25/ECON_513_C5_AF.PDF)
 
 ---
 ## 2. Automated ML with a large dataset
