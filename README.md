@@ -9,7 +9,7 @@ Forecasting the price of a Fama-French factor sorted portfolio using  Multi-equa
   
 [VIEW PROJECT as R Markdown HERE](https://afrohner.github.io/MSQE_25/MSQE_CAPSTONE_ES2.html)
 
-[VIEW PROJECT as PDF HERE](https://afrohner.github.io/MSQE_25/ECON_513_C5_AF.PDF)
+[VIEW PROJECT as PDF HERE](https://afrohner.github.io/MSQE_25/ECON_513_C5_AF.pdf)
 
 [VIEW PROJECT as Eviews Code HERE](https://afrohner.github.io/MSQE_25/CAPSTONE_eviews_CODE_V12.txt)
 
